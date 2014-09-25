@@ -1,73 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 using DateHelpers;
 using Xunit;
+using Xunit.Extensions;
 
 namespace DateHelpersTests
 {
-    public class IsoWeekTests   
+    public class IsoWeekTests
     {
-        [Fact]
-        public void First_of_january_2007_is_in_week_2007_W01()
+        [Theory]
+        [InlineData("2007-01-01", "2007-W01")]
+        [InlineData("2006-12-31", "2006-W52")]
+        [InlineData("2009-01-01", "2009-W01")]
+        [InlineData("2009-12-31", "2009-W53")]
+        [InlineData("2008-12-31", "2009-W01")]
+        [InlineData("2010-01-01", "2009-W53")]
+        public void Iso_week_from_date(string date, string expectedIsoWeek)
         {
-            var date = new DateTime(2007, 1, 1);
+            var typedDate = DateTime.ParseExact(
+                date,
+                "yyyy-MM-dd",
+                null,
+                DateTimeStyles.None);
 
-            var isoWeek = IsoWeekHelper.GetIsoWeek(date);
+            var isoWeek = IsoWeekHelper.GetIsoWeek(typedDate);
 
-            Assert.Equal("2007-W01", isoWeek);
-        }
-
-        [Fact]
-        public void Last_of_december_2006_is_in_week_2006_W52()
-        {
-            var date = new DateTime(2006, 12, 31);
-
-            var isoWeek = IsoWeekHelper.GetIsoWeek(date);
-
-            Assert.Equal("2006-W52", isoWeek);
-        }
-
-        [Fact]
-        public void First_of_january_2009_is_in_week_2009_W01()
-        {
-            var date = new DateTime(2009, 1, 1);
-
-            var isoWeek = IsoWeekHelper.GetIsoWeek(date);
-
-            Assert.Equal("2009-W01", isoWeek);
-        }
-
-        [Fact]
-        public void Last_of_december_2009_is_in_week_2009_W53()
-        {
-            var date = new DateTime(2009, 12, 31);
-
-            var isoWeek = IsoWeekHelper.GetIsoWeek(date);
-
-            Assert.Equal("2009-W53", isoWeek);
-        }
-
-        [Fact]
-        public void Last_of_december_2008_is_in_week_2009_W01()
-        {
-            var date = new DateTime(2008, 12, 31);
-
-            var isoWeek = IsoWeekHelper.GetIsoWeek(date);
-
-            Assert.Equal("2009-W01", isoWeek);
-        }
-
-        [Fact]
-        public void First_of_january_2010_is_in_week_2009_W53()
-        {
-            var date = new DateTime(2010, 1, 1);
-
-            var isoWeek = IsoWeekHelper.GetIsoWeek(date);
-
-            Assert.Equal("2009-W53", isoWeek);
+            Assert.Equal(expectedIsoWeek, isoWeek);
         }
     }
 }
